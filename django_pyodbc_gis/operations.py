@@ -21,6 +21,8 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     from_wkb = 'STGeomFromWKB'
     from_text = 'STGeomFromText'
 
+    compiler_module = 'sql_server.pyodbc.compiler'
+
     # We do have a geography type as well, but let's get geometry
     # working first:
     geometry = True
