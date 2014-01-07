@@ -24,3 +24,4 @@ nothing else.  It also means that introspection is rather fragile.
 
 * aggregate operations support
 * geography support
+* extended operations (gml, geojson, etc)
