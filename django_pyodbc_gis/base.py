@@ -1,5 +1,5 @@
-from sql_server.pyodbc import *
-from sql_server.pyodbc import DatabaseWrapper as MSSqlDatabaseWrapper
+from sql_server.pyodbc.base import *
+from sql_server.pyodbc.base import DatabaseWrapper as MSSqlDatabaseWrapper
 from django_pyodbc_gis.creation import MSSqlCreation
 from django_pyodbc_gis.introspection import MSSqlIntrospection
 from django_pyodbc_gis.operations import MSSqlOperations

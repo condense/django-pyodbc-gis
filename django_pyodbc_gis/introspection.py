@@ -1,6 +1,6 @@
 from django.contrib.gis.gdal import OGRGeomType
 
-import sql_server.pyodbc.introspection import DatabaseIntrospection
+from sql_server.pyodbc.introspection import DatabaseIntrospection
 import re
 
 
@@ -54,8 +54,8 @@ class MSSqlIntrospection(DatabaseIntrospection):
                     "FROM [INFORMATION_SCHEMA].[CHECK_CONSTRAINTS] cc"
                     "JOIN [INFORMATION_SCHEMA].[CONSTRAINT_COLUMN_USAGE] ccu"
                     "ON ccu.[CONSTRAINT_NAME] = cc.[CONSTRAINT_NAME]"
-                    "WHERE ccu.[CONSTRAINT_CATALOG] = '%s'" % table_name
-                    "AND [COLUMN_NAME] = '%s'" % geo_col
+                    "WHERE ccu.[CONSTRAINT_CATALOG] = '%s'"
+                    "AND [COLUMN_NAME] = '%s'" % (table_name, geo_col)
                 )
 
                 rows = cursor.fetchall()
