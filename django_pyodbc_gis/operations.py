@@ -1,5 +1,6 @@
 from django.contrib.gis.db.backends.base import BaseSpatialOperations
 from django.contrib.gis.db.backends.util import SpatialFunction
+from django.contrib.gis.measure import Distance
 from sql_server.pyodbc.operations import DatabaseOperations
 
 
@@ -76,9 +77,24 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     def get_distance(self, f, value, lookup_type):
         """
         Returns the distance parameters for the given geometry field,
-        lookup value, and lookup type.
+        lookup value, and lookup type.  This is based on the Spatialite
+        backend, since we don't currently support geography operations.
         """
-        raise NotImplementedError('Distance operations not available on this spatial backend.')
+        if not value:
+            return []
+        value = value[0]
+        if isinstance(value, Distance):
+            if f.geodetic(self.connection):
+                raise ValueError('The SQL Server backend does not support '
+                                 'distance queries on geometry fields with '
+                                 'a geodetic coordinate system. Distance '
+                                 'objects; use a numeric value of your '
+                                 'distance in degrees instead.')
+            else:
+                dist_param = getattr(value, Distance.unit_attname(f.units_name(self.connection)))
+        else:
+            dist_param = value
+        return [dist_param]
 
     def get_geom_placeholder(self, f, value):
         """
