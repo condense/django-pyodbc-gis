@@ -99,7 +99,8 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     def get_geom_placeholder(self, f, value):
         raise NotImplementedError('SQL Server does not implement SRID transformation')
 
-    # Routines for getting the OGC-compliant models.
+    # Routines for getting the OGC-compliant models --- SQL Server
+    # does not have OGC-compliant tables
     def geometry_columns(self):
         raise NotImplementedError
 
