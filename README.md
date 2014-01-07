@@ -20,6 +20,10 @@ theory store geometries of different types and SRIDs in the same
 column; this driver creates a constraint to check the type, but
 nothing else.  It also means that introspection is rather fragile.
 
+Geometries cannot be transformed to a different SRID (such as with
+[`ST_Transform`](http://postgis.org/docs/ST_Transform.html)) in
+PostGIS.
+
 # TODO
 
 * aggregate operations support

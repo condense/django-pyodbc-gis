@@ -97,13 +97,7 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         return [dist_param]
 
     def get_geom_placeholder(self, f, value):
-        """
-        Returns the placeholder for the given geometry field with the given
-        value.  Depending on the spatial backend, the placeholder may contain a
-        stored procedure call to the transformation function of the spatial
-        backend.
-        """
-        raise NotImplementedError
+        raise NotImplementedError('SQL Server does not implement SRID transformation')
 
     # Routines for getting the OGC-compliant models.
     def geometry_columns(self):
