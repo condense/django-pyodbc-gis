@@ -4,14 +4,14 @@ from django.contrib.gis.measure import Distance
 from sql_server.pyodbc.operations import DatabaseOperations
 
 
-class MSSqlMethod(SpatialFunction):
+class MSSqlBoolMethod(SpatialFunction):
     """SQL Server (non-static) spatial functions are treated as methods,
     for eg g.STContains(p)"""
 
-    sql_template = '[%(geo_col)s].%(function)s(%(geometry)s)'
+    sql_template = '%(geo_col)s.%(function)s(%(geometry)s) = 1'
 
     def __init__(self, function, **kwargs):
-        super(MSSqlMethod, self).__init__(function, **kwargs)
+        super(MSSqlBoolMethod, self).__init__(function, **kwargs)
 
 
 class MSSqlAdapter(str):
@@ -84,18 +84,33 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     # 'strictly_below'
 
     geometry_functions = {
-        'contains': MSSqlMethod('STContains'),
-        'crosses': MSSqlMethod('STCrosses'),
-        'disjoint': MSSqlMethod('STDisjoint'),
-        'equals': MSSqlMethod('STEquals'),  # can we also implement exact, same_as like this?
-        'intersects': MSSqlMethod('STIntersects'),
-        'overlaps': MSSqlMethod('STOverlaps'),
-        'touches': MSSqlMethod('STTouches'),
-        'within': MSSqlMethod('STWithin'),
+        'contains': MSSqlBoolMethod('STContains'),
+        'crosses': MSSqlBoolMethod('STCrosses'),
+        'disjoint': MSSqlBoolMethod('STDisjoint'),
+        'equals': MSSqlBoolMethod('STEquals'),  # can we also implement exact, same_as like this?
+        'intersects': MSSqlBoolMethod('STIntersects'),
+        'overlaps': MSSqlBoolMethod('STOverlaps'),
+        'touches': MSSqlBoolMethod('STTouches'),
+        'within': MSSqlBoolMethod('STWithin'),
     }
 
-    def spatial_lookup_sql(self, lvalue, lookup_type, value, field):
-        raise NotImplementedError
+    gis_terms = set(geometry_functions) | set(['isnull'])
+
+    def spatial_lookup_sql(self, lvalue, lookup_type, value, field, qn):
+        alias, col, db_type = lvalue
+
+        geo_col = '%s.%s' % (qn(alias), qn(col))
+
+        if lookup_type not in self.geometry_functions:
+            raise TypeError("Got invalid lookup_type: %s" % repr(lookup_type))
+
+        # TODO: Per the mysql backend, I'm not sure this is feasible anyway:
+        if lookup_type == 'isnull':
+            return "%s IS %sNULL" % (geo_col, ('' if value else 'NOT ')), []
+
+        else:
+            op = self.geometry_functions[lookup_type]
+            return op.as_sql(geo_col, self.get_geom_placeholder(field, value))
 
     # GeometryField operations
     def geo_db_type(self, f):
