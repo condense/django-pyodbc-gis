@@ -74,7 +74,9 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
     # GeometryField operations
     def geo_db_type(self, f):
-        return f.geom_type
+        # We only have the one geometry type (especially since we
+        # don't currently support geography):
+        return 'geometry'
 
     def get_distance(self, f, value, lookup_type):
         """
