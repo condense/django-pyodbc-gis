@@ -11,7 +11,7 @@ class MSSqlCreation(DatabaseCreation):
 
     def sql_indexes_for_field(self, model, f, style):
         from django.contrib.gis.db.models.fields import GeometryField
-        output = super(MySQLCreation, self).sql_indexes_for_field(model, f, style)
+        output = super(MSSqlCreation, self).sql_indexes_for_field(model, f, style)
 
         if isinstance(f, GeometryField):
             qn = self.connection.ops.quote_name
