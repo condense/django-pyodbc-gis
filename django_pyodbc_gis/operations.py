@@ -1,4 +1,3 @@
-from django.contrib.gis.db.backends.adapter import WKTAdapter
 from django.contrib.gis.db.backends.base import BaseSpatialOperations
 from django.contrib.gis.db.backends.util import SpatialFunction
 from django.contrib.gis.measure import Distance
@@ -15,6 +14,28 @@ class MSSqlMethod(SpatialFunction):
         super(MSSqlMethod, self).__init__(function, **kwargs)
 
 
+class MSSqlAdapter(str):
+    """This adapter works around an apparent bug in the pyodbc driver
+    itself.  We only require the wkt adapter, but if we use
+    django.contrib.gis.db.backends.adapter.WKTAdapter then
+    cursor.execute() fails because it doesn't call str() on unrecognised
+    types.  So we make sure that our adaper *is* a string."""
+
+    def __new__(cls, geom):
+        geostr = str.__new__(cls, geom.wkt)
+        geostr.srid = geom.srid
+        return geostr
+
+    def __eq__(self, other):
+        if not isinstance(other, MSSqlAdapter):
+            return False
+        return super(MSSqlAdapter, self).__eq__(other) and \
+            self.srid == other.srid
+
+    def prepare_database_save(self, unused):
+        return self
+
+
 class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
     name = 'SQL Server'
@@ -22,7 +43,7 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     from_wkb = 'geometry::STGeomFromWKB'
     from_text = 'geometry::STGeomFromText'
 
-    Adapter = WKTAdapter
+    Adapter = MSSqlAdapter
     Adaptor = Adapter  # Backwards-compatibility alias.
 
     compiler_module = 'sql_server.pyodbc.compiler'
