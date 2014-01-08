@@ -1,3 +1,4 @@
+from django.contrib.gis.db.backends.adapter import WKTAdapter
 from django.contrib.gis.db.backends.base import BaseSpatialOperations
 from django.contrib.gis.db.backends.util import SpatialFunction
 from django.contrib.gis.measure import Distance
@@ -18,8 +19,11 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
     name = 'SQL Server'
     select = '%s.STAsText()'
-    from_wkb = 'STGeomFromWKB'
-    from_text = 'STGeomFromText'
+    from_wkb = 'geometry::STGeomFromWKB'
+    from_text = 'geometry::STGeomFromText'
+
+    Adapter = WKTAdapter
+    Adaptor = Adapter  # Backwards-compatibility alias.
 
     compiler_module = 'sql_server.pyodbc.compiler'
 
@@ -101,7 +105,17 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         return [dist_param]
 
     def get_geom_placeholder(self, f, value):
-        raise NotImplementedError('SQL Server does not implement SRID transformation')
+        """
+        Because SQL Server does not support spatial transformations,
+        there is no need to modify the placeholder based on the
+        contents of the given value.  We do need to specify the SRID
+        however, since this argument is required.
+        """
+        if hasattr(value, 'expression'):
+            placeholder = self.get_expression_column(value)
+        else:
+            placeholder = '%s(%%s,%s)' % (self.from_text, f.srid)
+        return placeholder
 
     # Routines for getting the OGC-compliant models --- SQL Server
     # does not have OGC-compliant tables
