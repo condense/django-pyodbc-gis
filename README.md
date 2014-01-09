@@ -25,8 +25,8 @@ column; this driver creates a constraint to check the type, but
 nothing else.  It also means that introspection is rather fragile.
 
 Geometries cannot be transformed to a different SRID (such as with
-[`ST_Transform`](http://postgis.org/docs/ST_Transform.html)) in
-PostGIS.
+[`ST_Transform`](http://postgis.org/docs/ST_Transform.html) in
+PostGIS).
 
 # Installation and Setup
 
