@@ -67,6 +67,7 @@ you may well have gotten this wrong)
 
 # TODO
 
+* Other distance functions (`distance_lt`, etc)
 * aggregate operations support
 * geography support
 * extended operations (gml, geojson, etc)
