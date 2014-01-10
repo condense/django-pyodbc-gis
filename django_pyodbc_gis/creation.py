@@ -16,6 +16,8 @@ class MSSqlCreation(DatabaseCreation):
         if isinstance(f, GeometryField):
             qn = self.connection.ops.quote_name
             db_table = model._meta.db_table
+            constraint_name = 'chk_%s_%s_%s' % \
+                              (db_table, f.column, f.geom_type)
 
             # Geometry-type constraint:
             output.append(style.SQL_KEYWORD('ALTER TABLE ') +
