@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.contrib.gis.db.backends.base import BaseSpatialOperations
 from django.contrib.gis.db.backends.util import SpatialFunction
+from django.contrib.gis.geometry.backend import Geometry
 from django.contrib.gis.measure import Distance
 from django.utils import six
 from sql_server.pyodbc.operations import DatabaseOperations
@@ -123,6 +124,13 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
     gis_terms = set(geometry_functions) | set(['isnull'])
 
+    collect = 'CollectionAggregate'
+    extent = 'EnvelopeAggregate'
+    unionagg = 'UnionAggregate'
+
+    valid_aggregates = dict([(k, None) for k in
+                             ('Collect', 'Extent', 'Union')])
+
     def spatial_lookup_sql(self, lvalue, lookup_type, value, field, qn):
         alias, col, db_type = lvalue
 
@@ -160,6 +168,50 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
                 return dist_op.as_sql(geo_col, self.get_geom_placeholder(field, geom))
 
             return op.as_sql(geo_col, self.get_geom_placeholder(field, value))
+
+    def check_aggregate_support(self, aggregate):
+        """
+        Checks if the given aggregate name is supported (that is, if it's
+        in `self.valid_aggregates`).
+        """
+        agg_name = aggregate.__class__.__name__
+        return agg_name in self.valid_aggregates
+
+    def spatial_aggregate_sql(self, agg):
+        """
+        Returns the spatial aggregate SQL template and function for the
+        given Aggregate instance.
+        """
+        agg_name = agg.__class__.__name__
+        if not self.check_aggregate_support(agg):
+            raise NotImplementedError('%s spatial aggregate is not implmented '
+                                      'for this backend.' % agg_name)
+        agg_name = agg_name.lower()
+        if agg_name == 'union':
+            agg_name += 'agg'
+        sql_template = 'geometry::%(function)s(%(field)s).ToString()'
+        sql_function = getattr(self, agg_name)
+        return sql_template, sql_function
+
+    def convert_extent(self, poly):
+        """
+        Returns a 4-tuple extent for the `Extent` aggregate by converting
+        the bounding box text returned by SQL Server (`poly` argument), for
+        example: "POLYGON ((0 0, 2 0, 2 3, 0 3, 0 0))".
+        """
+        crnrs = poly[10:-2].split(',')
+        xmin, ymin = map(float, crnrs[0].strip().split(' '))
+        xmax, ymax = map(float, crnrs[2].strip().split(' '))
+        return xmin, ymin, xmax, ymax
+
+    def convert_geom(self, hex, geo_field):
+        """
+        Converts the geometry returned from aggregate queries.
+        """
+        if hex:
+            return Geometry(hex)
+        else:
+            return None
 
     # GeometryField operations
     def geo_db_type(self, f):
