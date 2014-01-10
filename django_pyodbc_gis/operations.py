@@ -1,6 +1,9 @@
+from decimal import Decimal
+
 from django.contrib.gis.db.backends.base import BaseSpatialOperations
 from django.contrib.gis.db.backends.util import SpatialFunction
 from django.contrib.gis.measure import Distance
+from django.utils import six
 from sql_server.pyodbc.operations import DatabaseOperations
 
 
@@ -12,6 +15,18 @@ class MSSqlBoolMethod(SpatialFunction):
 
     def __init__(self, function, **kwargs):
         super(MSSqlBoolMethod, self).__init__(function, **kwargs)
+
+
+class MSSqlDistanceFunc(SpatialFunction):
+    """Implements distance comparison lookups, eg distance_lte"""
+
+    sql_template = ('%(geo_col)s.%(function)s(%(geometry)s) '
+                    '%(operator)s %(result)s')
+
+    def __init__(self, op):
+        super(MSSqlDistanceFunc, self).__init__('STDistance',
+                                                operator=op,
+                                                result='%s')
 
 
 class MSSqlAdapter(str):
@@ -34,6 +49,10 @@ class MSSqlAdapter(str):
 
     def prepare_database_save(self, unused):
         return self
+
+
+# Valid distance types and substitutions
+dtypes = (Decimal, Distance, float) + six.integer_types
 
 
 class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
@@ -94,6 +113,14 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         'within': MSSqlBoolMethod('STWithin'),
     }
 
+    distance_functions = {
+        'distance_gt': (MSSqlDistanceFunc('>'), dtypes),
+        'distance_gte': (MSSqlDistanceFunc('>='), dtypes),
+        'distance_lt': (MSSqlDistanceFunc('<'), dtypes),
+        'distance_lte': (MSSqlDistanceFunc('<='), dtypes),
+    }
+    geometry_functions.update(distance_functions)
+
     gis_terms = set(geometry_functions) | set(['isnull'])
 
     def spatial_lookup_sql(self, lvalue, lookup_type, value, field, qn):
@@ -110,6 +137,28 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
         else:
             op = self.geometry_functions[lookup_type]
+
+            # if lookup_type is a tuple then we expect the value to be
+            # a tuple as well:
+            if isinstance(op, tuple):
+                dist_op, arg_type = op
+
+                # Ensuring that a tuple _value_ was passed in from the user
+                if not isinstance(value, tuple):
+                    raise ValueError('Tuple required for `%s` lookup type.' %
+                                     lookup_type)
+                if len(value) != 2:
+                    raise ValueError('2-element tuple required for %s lookup type.' %
+                                     lookup_type)
+
+                # Ensuring the argument type matches what we expect.
+                if not isinstance(value[1], arg_type):
+                    raise ValueError('Argument type should be %s, got %s instead.' %
+                                     (arg_type, type(value[1])))
+
+                geom = value[0]
+                return dist_op.as_sql(geo_col, self.get_geom_placeholder(field, geom))
+
             return op.as_sql(geo_col, self.get_geom_placeholder(field, value))
 
     # GeometryField operations
