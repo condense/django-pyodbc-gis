@@ -68,9 +68,8 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
     compiler_module = 'django_pyodbc_gis.compiler'
 
-    # We do have a geography type as well, but let's get geometry
-    # working first:
     geometry = True
+    geography = True
 
     # 'bbcontains'
     # 'bboverlaps'
@@ -121,6 +120,16 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         'distance_lte': (MSSqlDistanceFunc('<='), dtypes),
     }
     geometry_functions.update(distance_functions)
+
+    geography_functions = {
+        'contains': MSSqlBoolMethod('STContains'),
+        'disjoint': MSSqlBoolMethod('STDisjoint'),
+        'equals': MSSqlBoolMethod('STEquals'),
+        'intersects': MSSqlBoolMethod('STIntersects'),
+        'overlaps': MSSqlBoolMethod('STOverlaps'),
+        'within': MSSqlBoolMethod('STWithin'),
+    }
+    geography_functions.update(distance_functions)
 
     gis_terms = set(geometry_functions) | set(['isnull'])
 
