@@ -5,6 +5,32 @@ Server, built on top of
 It should be considered very alpha-quality at this stage!  Feedback,
 issues, and patches are all very welcome.
 
+# Supported and unsupported operations
+
+Most
+[possible operations](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/)
+are supported.  The primary exceptions are those that include the boundary
+itself, and convenience operations such as `left`/`right`,
+`overlaps_above`, etc.
+
+The following spatial lookups are **not** supported:
+
+* bounding-box related: `contains_properly`, `covered_by`, `covers`
+* specialist positional: `left`, `right`, `overlaps_left`,
+  `overlaps_right`, `overlaps_above`, `overlaps_below`,
+  `strictly_above`, `strictly_below`
+* miscellaneous: `dwithin`, `exact`, `relate`, `same_as`
+
+The following spatial aggregate operations are **not** supported:
+
+* `extent3d` and `make_line`
+
+In addition, for performance reasons not all geometry operations have
+a corresponding geography analogue.  The following operations are
+**not** available on geography types:
+
+* `bbcontains`, `bboverlaps`, `contained`, `crosses`, `touches`
+
 # Limitations of SQL Server
 
 SQL Server is OGC compliant, but does fall short of the functionality
