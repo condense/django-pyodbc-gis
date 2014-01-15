@@ -60,8 +60,6 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
     name = 'SQL Server'
     select = '%s.STAsText()'
-    from_wkb = 'geometry::STGeomFromWKB'
-    from_text = 'geometry::STGeomFromText'
 
     Adapter = MSSqlAdapter
     Adaptor = Adapter  # Backwards-compatibility alias.
@@ -272,7 +270,8 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         if hasattr(value, 'expression'):
             placeholder = self.get_expression_column(value)
         else:
-            placeholder = '%s(%%s,%s)' % (self.from_text, f.srid)
+            ns = 'geography' if f.geography else 'geometry'
+            placeholder = '%s::STGeomFromText(%%s,%s)' % (ns, f.srid)
         return placeholder
 
     # Routines for getting the OGC-compliant models --- SQL Server
