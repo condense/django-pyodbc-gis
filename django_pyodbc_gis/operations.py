@@ -30,6 +30,20 @@ class MSSqlDistanceFunc(SpatialFunction):
                                                 result='%s')
 
 
+class MSSqlBBBoolMethod(MSSqlBoolMethod):
+    """SQL Server has no native bounding-box methods, but we can emulate
+    them with a slightly more complicated expression.  The call will
+    be translated into something like
+    col.STEnvelope().STOverlaps(geom.STEnvelope())
+    where STEnvelope() first simplifies the geometries to their
+    bounding rectangles."""
+
+    sql_template = '%(geo_col)s.STEnvelope().%(function)s(%(geometry)s.STEnvelope()) = 1'
+
+    def __init__(self, function, **kwargs):
+        super(MSSqlBoolMethod, self).__init__(function, **kwargs)
+
+
 class MSSqlAdapter(str):
     """This adapter works around an apparent bug in the pyodbc driver
     itself.  We only require the wkt adapter, but if we use
@@ -101,6 +115,9 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     # 'strictly_below'
 
     geometry_functions = {
+        'bbcontains': MSSqlBBBoolMethod('STContains'),
+        'bboverlaps': MSSqlBBBoolMethod('STOverlaps'),
+        'contained': MSSqlBBBoolMethod('STWithin'),
         'contains': MSSqlBoolMethod('STContains'),
         'crosses': MSSqlBoolMethod('STCrosses'),
         'disjoint': MSSqlBoolMethod('STDisjoint'),
