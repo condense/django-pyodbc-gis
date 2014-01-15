@@ -145,15 +145,23 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
 
         geo_col = '%s.%s' % (qn(alias), qn(col))
 
-        if lookup_type not in self.geometry_functions:
-            raise TypeError("Got invalid lookup_type: %s" % repr(lookup_type))
+        if field.geography:
+            if lookup_type not in self.geography_functions:
+                raise TypeError("Got invalid lookup_type for geography: %s" %
+                                lookup_type)
+        else:
+            if lookup_type not in self.geometry_functions:
+                raise TypeError("Got invalid lookup_type for geometry: %s" %
+                                lookup_type)
 
-        # TODO: Per the mysql backend, I'm not sure this is feasible anyway:
         if lookup_type == 'isnull':
             return "%s IS %sNULL" % (geo_col, ('' if value else 'NOT ')), []
 
         else:
-            op = self.geometry_functions[lookup_type]
+            if field.geography:
+                op = self.geography_functions[lookup_type]
+            else:
+                op = self.geometry_functions[lookup_type]
 
             # if lookup_type is a tuple then we expect the value to be
             # a tuple as well:
