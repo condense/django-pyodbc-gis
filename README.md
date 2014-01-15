@@ -67,7 +67,6 @@ you may well have gotten this wrong)
 
 # TODO
 
-* geography support
 * extended operations (gml, geojson, etc.  Further investigation: SQL
   Server only supports GML, but treats it as an instance method
   where-as geodjango assumes it is a function.  This might remain on

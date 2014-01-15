@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name="django-pyodbc-gis",
-    version="0.0.3",
+    version="0.0.4",
     author="Mark Hepburn",
     author_email="mark@condense.com.au",
     description=("GIS support for SQL Server, on top of django-pyodbc"),
