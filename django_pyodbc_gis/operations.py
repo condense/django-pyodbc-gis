@@ -206,7 +206,11 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         agg_name = agg_name.lower()
         if agg_name == 'union':
             agg_name += 'agg'
-        sql_template = 'geometry::%(function)s(%(field)s).ToString()'
+        # We need to namespace the function depending on whether it's
+        # for a geography or geometry (which requires digging into the
+        # Aggregate), but the function name is the same for both:
+        ns = 'geography' if agg.source.geography else 'geometry'
+        sql_template = ns + '::%(function)s(%(field)s).ToString()'
         sql_function = getattr(self, agg_name)
         return sql_template, sql_function
 
