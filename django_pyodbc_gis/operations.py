@@ -83,6 +83,12 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     geometry = True
     geography = True
 
+    # Clearly a bald-faced lie, but the limitations of SQL Server are
+    # actually similar to those of mysql, and coupled with some
+    # baked-in mysql checks in the framework this lie enables the
+    # admin to run.  See geometry_columns() and spatial_ref_sys().
+    mysql = True
+
     # 'bbcontains'
     # 'bboverlaps'
     # 'contained'

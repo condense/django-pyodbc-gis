@@ -54,6 +54,14 @@ Geometries cannot be transformed to a different SRID (such as with
 [`ST_Transform`](http://postgis.org/docs/ST_Transform.html) in
 PostGIS).
 
+# Admin Interface
+
+The admin interface works.  This is worth noting here simply because
+the interface has to be pretend to be MySQL in order to run!  There
+are some hard-coded checks for MySQL in the framework, and the
+limitations (with respect to introspection) of SQL Server are actually
+similar enough that this works for SQL Server too.
+
 # Installation and Setup
 
 The only direct dependency is
