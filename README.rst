@@ -81,23 +81,22 @@ If you are on linux this will require installing
 important is `odbcinst.ini`).
 
 To use the driver, your Django database configuration section should
-look something like this:
-```
-DATABASES = {
-    'default': {
-        'NAME': 'dbname',
-        'ENGINE': 'django_pyodbc_gis',
-        'HOST': '127.0.0.1,1433',
-        'USER': 'django',
-        'PASSWORD': 'pwd123',
-        'OPTIONS': {
-            'host_is_server': True,
-            # 'dsn': 'mssql',
-            'extra_params': 'TDS_Version=8.0'
+look something like this: ::
+
+    DATABASES = {
+        'default': {
+            'NAME': 'dbname',
+            'ENGINE': 'django_pyodbc_gis',
+            'HOST': '127.0.0.1,1433',
+            'USER': 'django',
+            'PASSWORD': 'pwd123',
+            'OPTIONS': {
+                'host_is_server': True,
+                # 'dsn': 'mssql',
+                'extra_params': 'TDS_Version=8.0'
+            }
         }
     }
-}
-```
 
 You have two options regarding specifying the host connection details;
 if you have configured a DSN you may omit the `HOST` key and use the
