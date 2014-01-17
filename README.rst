@@ -120,4 +120,4 @@ messages about unicode_ you may well have gotten this wrong)
   the back-burner for now)
 * Check inspectdb support
 * Test suite!
-  - Test against 2008, 2005 as well
+  * Test against 2008, 2005 as well
