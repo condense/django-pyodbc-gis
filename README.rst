@@ -5,7 +5,9 @@ Server, built on top of
 It should be considered very alpha-quality at this stage!  Feedback,
 issues, and patches are all very welcome.
 
-# Supported and unsupported operations
+======================================
+ Supported and unsupported operations
+======================================
 
 Most
 [possible operations](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/)
@@ -31,7 +33,9 @@ a corresponding geography analogue.  The following operations are
 
 * `bbcontains`, `bboverlaps`, `contained`, `crosses`, `touches`
 
-# Limitations of SQL Server
+===========================
+ Limitations of SQL Server
+===========================
 
 SQL Server is OGC compliant, but does fall short of the functionality
 provided by [PostGIS](http://postgis.net/) and
@@ -54,7 +58,9 @@ Geometries cannot be transformed to a different SRID (such as with
 [`ST_Transform`](http://postgis.org/docs/ST_Transform.html) in
 PostGIS).
 
-# Admin Interface
+=================
+ Admin Interface
+=================
 
 The admin interface works.  This is worth noting here simply because
 the interface has to be pretend to be MySQL in order to run!  There
@@ -62,7 +68,9 @@ are some hard-coded checks for MySQL in the framework, and the
 limitations (with respect to introspection) of SQL Server are actually
 similar enough that this works for SQL Server too.
 
-# Installation and Setup
+========================
+ Installation and Setup
+========================
 
 The only direct dependency is
 [django-pyodbc-azure](https://github.com/michiya/django-pyodbc-azure).
@@ -99,7 +107,9 @@ messages about
 [unicode](http://www.seanelavelle.com/2011/07/30/pyodbc-and-freetds-unicode-ntext-problem-solved/)
 you may well have gotten this wrong)
 
-# TODO
+======
+ TODO
+======
 
 * extended operations (gml, geojson, etc.  Further investigation: SQL
   Server only supports GML, but treats it as an instance method
