@@ -105,3 +105,7 @@ you may well have gotten this wrong)
   Server only supports GML, but treats it as an instance method
   where-as geodjango assumes it is a function.  This might remain on
   the back-burner for now)
+* Check inspectdb support
+* Test suite!
+** Test against 2008, 2005 as well
+* convert README to rst for pypi support
