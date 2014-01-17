@@ -12,26 +12,26 @@ issues, and patches are all very welcome.
 Most
 [possible operations](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/)
 are supported.  The primary exceptions are those that include the boundary
-itself, and convenience operations such as `left`/`right`,
-`overlaps_above`, etc.
+itself, and convenience operations such as ``left``/``right``,
+``overlaps_above``, etc.
 
 The following spatial lookups are **not** supported:
 
-* bounding-box related: `contains_properly`, `covered_by`, `covers`
-* specialist positional: `left`, `right`, `overlaps_left`,
-  `overlaps_right`, `overlaps_above`, `overlaps_below`,
-  `strictly_above`, `strictly_below`
-* miscellaneous: `dwithin`, `exact`, `relate`, `same_as`
+* bounding-box related: ``contains_properly``, ``covered_by``, ``covers``
+* specialist positional: ``left``, ``right``, ``overlaps_left``,
+  ``overlaps_right``, ``overlaps_above``, ``overlaps_below``,
+  ``strictly_above``, ``strictly_below``
+* miscellaneous: ``dwithin``, ``exact``, ``relate``, ``same_as``
 
 The following spatial aggregate operations are **not** supported:
 
-* `extent3d` and `make_line`
+* ``extent3d`` and ``make_line``
 
 In addition, for performance reasons not all geometry operations have
 a corresponding geography analogue.  The following operations are
 **not** available on geography types:
 
-* `bbcontains`, `bboverlaps`, `contained`, `crosses`, `touches`
+* ``bbcontains``, ``bboverlaps``, ``contained``, ``crosses``, ``touches``
 
 ===========================
  Limitations of SQL Server
@@ -42,9 +42,9 @@ provided by [PostGIS](http://postgis.net/) and
 [Oracle Spatial](http://www.oracle.com/technetwork/database/options/spatialandgraph/overview/index.html).
 In particular, all of the boundary inclusion operations are missing:
 for example,
-[`contains`](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#contains)
+[``contains``](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#contains)
 is supported, but not
-[`covers`](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#covers).
+[``covers``](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#covers).
 
 Type information is also slightly different in SQL Server.  Instead of
 keeping the geometry type (Point, Polygon, etc) in the column's
@@ -55,7 +55,7 @@ column; this driver creates a constraint to check the type, but
 nothing else.  It also means that introspection is rather fragile.
 
 Geometries cannot be transformed to a different SRID (such as with
-[`ST_Transform`](http://postgis.org/docs/ST_Transform.html) in
+[``ST_Transform``](http://postgis.org/docs/ST_Transform.html) in
 PostGIS).
 
 =================
@@ -78,7 +78,7 @@ If you are on linux this will require installing
 [freetds](http://www.freetds.org/) and
 [odbcinst](http://www.unixodbc.org/).  You will also need to
 [configure](http://www.unixodbc.org/doc/FreeTDS.html) it (the most
-important is `odbcinst.ini`).
+important is ``odbcinst.ini``).
 
 To use the driver, your Django database configuration section should
 look something like this: ::
@@ -99,9 +99,9 @@ look something like this: ::
     }
 
 You have two options regarding specifying the host connection details;
-if you have configured a DSN you may omit the `HOST` key and use the
-`dsn` key in `OPTIONS` to specify it.  If not, you will probably need
-to specify the TDS version in `extra_params` (if you get error
+if you have configured a DSN you may omit the ``HOST`` key and use the
+``dsn`` key in ``OPTIONS`` to specify it.  If not, you will probably need
+to specify the TDS version in ``extra_params`` (if you get error
 messages about
 [unicode](http://www.seanelavelle.com/2011/07/30/pyodbc-and-freetds-unicode-ntext-problem-solved/)
 you may well have gotten this wrong)
@@ -116,5 +116,5 @@ you may well have gotten this wrong)
   the back-burner for now)
 * Check inspectdb support
 * Test suite!
-** Test against 2008, 2005 as well
+  - Test against 2008, 2005 as well
 * convert README to rst for pypi support
