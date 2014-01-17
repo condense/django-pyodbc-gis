@@ -1,6 +1,7 @@
 This driver implements basic GIS (geodjango) support for Microsoft SQL
-Server, built on top of
-[django-pyodbc-azure](https://github.com/michiya/django-pyodbc-azure).
+Server, built on top of `django-pyodbc-azure`_.
+
+.. _django-pyodbc-azure: https://github.com/michiya/django-pyodbc-azure
 
 It should be considered very alpha-quality at this stage!  Feedback,
 issues, and patches are all very welcome.
@@ -9,11 +10,11 @@ issues, and patches are all very welcome.
  Supported and unsupported operations
 ======================================
 
-Most
-[possible operations](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/)
-are supported.  The primary exceptions are those that include the boundary
-itself, and convenience operations such as ``left``/``right``,
-``overlaps_above``, etc.
+Most `possible operations`_ are supported.  The primary exceptions are
+those that include the boundary itself, and convenience operations
+such as ``left``/``right``, ``overlaps_above``, etc.
+
+.. _possible operations: https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/
 
 The following spatial lookups are **not** supported:
 
@@ -37,14 +38,15 @@ a corresponding geography analogue.  The following operations are
  Limitations of SQL Server
 ===========================
 
-SQL Server is OGC compliant, but does fall short of the functionality
-provided by [PostGIS](http://postgis.net/) and
-[Oracle Spatial](http://www.oracle.com/technetwork/database/options/spatialandgraph/overview/index.html).
-In particular, all of the boundary inclusion operations are missing:
-for example,
-[``contains``](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#contains)
-is supported, but not
-[``covers``](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#covers).
+SQL Server is OGC compliant, but  does fall short of the functionality
+provided by PostGIS_ and `Oracle Spatial`_.  In particular, all of the
+boundary inclusion operations are missing: for example, `contains`_ is
+supported, but not `covers`_.
+
+.. _PostGIS: http://postgis.net/
+.. _Oracle Spatial: http://www.oracle.com/technetwork/database/options/spatialandgraph/overview/index.html
+.. _contains: https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#contains
+.. _covers: https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#covers
 
 Type information is also slightly different in SQL Server.  Instead of
 keeping the geometry type (Point, Polygon, etc) in the column's
@@ -55,8 +57,9 @@ column; this driver creates a constraint to check the type, but
 nothing else.  It also means that introspection is rather fragile.
 
 Geometries cannot be transformed to a different SRID (such as with
-[``ST_Transform``](http://postgis.org/docs/ST_Transform.html) in
-PostGIS).
+`ST_Transform`_ in PostGIS).
+
+.. _ST_Transform: http://postgis.org/docs/ST_Transform.html
 
 =================
  Admin Interface
@@ -72,13 +75,14 @@ similar enough that this works for SQL Server too.
  Installation and Setup
 ========================
 
-The only direct dependency is
-[django-pyodbc-azure](https://github.com/michiya/django-pyodbc-azure).
-If you are on linux this will require installing
-[freetds](http://www.freetds.org/) and
-[odbcinst](http://www.unixodbc.org/).  You will also need to
-[configure](http://www.unixodbc.org/doc/FreeTDS.html) it (the most
-important is ``odbcinst.ini``).
+The only direct dependency is `django-pyodbc-azure`_.  If you are on
+linux this will require installing freetds_ and odbcinst_.  You will
+also need to configure_ it (the most important is ``odbcinst.ini``).
+
+.. _django-pyodbc-azure: https://github.com/michiya/django-pyodbc-azure
+.. _freetds: http://www.freetds.org/
+.. _odbcinst: http://www.unixodbc.org/
+.. _configure: http://www.unixodbc.org/doc/FreeTDS.html
 
 To use the driver, your Django database configuration section should
 look something like this: ::
@@ -100,11 +104,11 @@ look something like this: ::
 
 You have two options regarding specifying the host connection details;
 if you have configured a DSN you may omit the ``HOST`` key and use the
-``dsn`` key in ``OPTIONS`` to specify it.  If not, you will probably need
-to specify the TDS version in ``extra_params`` (if you get error
-messages about
-[unicode](http://www.seanelavelle.com/2011/07/30/pyodbc-and-freetds-unicode-ntext-problem-solved/)
-you may well have gotten this wrong)
+``dsn`` key in ``OPTIONS`` to specify it.  If not, you will probably
+need to specify the TDS version in ``extra_params`` (if you get error
+messages about unicode_ you may well have gotten this wrong)
+
+.. _unicode: http://www.seanelavelle.com/2011/07/30/pyodbc-and-freetds-unicode-ntext-problem-solved/
 
 ======
  TODO
