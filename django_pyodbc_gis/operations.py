@@ -7,6 +7,8 @@ from django.contrib.gis.measure import Distance
 from django.utils import six
 from sql_server.pyodbc.operations import DatabaseOperations
 
+from .models import SpatialRefSys
+
 
 class MSSqlBoolMethod(SpatialFunction):
     """SQL Server (non-static) spatial functions are treated as methods,
@@ -307,4 +309,4 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         raise NotImplementedError
 
     def spatial_ref_sys(self):
-        raise NotImplementedError
+        return SpatialRefSys

@@ -33,8 +33,6 @@ class MSSqlGeoQuerySet(GeoQuerySet):
         DRY routine for GeoQuerySet distance attribute routines.
         """
 
-        print "_distance_attribute", func, geom, tolerance, spheroid, kwargs
-
         # Setting up the distance procedure arguments.
         procedure_args, geo_field = self._spatial_setup(func, field_name=kwargs.get('field_name', None))
 
@@ -51,11 +49,7 @@ class MSSqlGeoQuerySet(GeoQuerySet):
         backend = connection.ops
         #############################################################################
 
-        #############################################################################
-        # TODO: Hacked to get basic MSSql going.  Needs investigating.
-        # if geodetic:
-        if geodetic or backend.mssql:
-        #############################################################################
+        if geodetic:
             dist_att = 'm'
         else:
             dist_att = Distance.unit_attname(geo_field.units_name(connection))
