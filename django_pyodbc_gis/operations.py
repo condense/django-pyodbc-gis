@@ -89,6 +89,9 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     # admin to run.  See geometry_columns() and spatial_ref_sys().
     mysql = True
 
+    # NOTE: we should get a default added for core code
+    mssql = True
+
     # 'bbcontains'
     # 'bboverlaps'
     # 'contained'
@@ -157,6 +160,7 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     collect = 'CollectionAggregate'
     extent = 'EnvelopeAggregate'
     unionagg = 'UnionAggregate'
+    distance = 'STDistance'
 
     valid_aggregates = dict([(k, None) for k in
                              ('Collect', 'Extent', 'Union')])
