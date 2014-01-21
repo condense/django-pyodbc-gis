@@ -141,11 +141,14 @@ class MSSqlGeoQuerySet(GeoQuerySet):
                             procedure_fmt += ', %s(%%%%s, %s)' % (backend.transform, self.query.transformed_srid)
                 else:
                     # `transform()` was not used on this GeoQuerySet.
+                    #############################################################################
+                    # NOTE: Added flag to support mssql distance call format
                     if backend.mssql:
                         procedure_fmt = '%(geom)s'
                         method_call = True
                     else:
                         procedure_fmt = '%(geo_col)s,%(geom)s'
+                    #############################################################################
 
                 if not geography and geodetic:
                     # Spherical distance calculation is needed (because the geographic
