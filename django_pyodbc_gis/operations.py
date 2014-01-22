@@ -7,6 +7,8 @@ from django.contrib.gis.measure import Distance
 from django.utils import six
 from sql_server.pyodbc.operations import DatabaseOperations
 
+from .models import SpatialRefSys
+
 
 class MSSqlBoolMethod(SpatialFunction):
     """SQL Server (non-static) spatial functions are treated as methods,
@@ -89,6 +91,9 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     # admin to run.  See geometry_columns() and spatial_ref_sys().
     mysql = True
 
+    # NOTE: we should get a default added for core code
+    mssql = True
+
     # 'bbcontains'
     # 'bboverlaps'
     # 'contained'
@@ -157,6 +162,7 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
     collect = 'CollectionAggregate'
     extent = 'EnvelopeAggregate'
     unionagg = 'UnionAggregate'
+    distance = 'STDistance'
 
     valid_aggregates = dict([(k, None) for k in
                              ('Collect', 'Extent', 'Union')])
@@ -303,4 +309,4 @@ class MSSqlOperations(DatabaseOperations, BaseSpatialOperations):
         raise NotImplementedError
 
     def spatial_ref_sys(self):
-        raise NotImplementedError
+        return SpatialRefSys
